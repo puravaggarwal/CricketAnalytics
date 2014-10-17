@@ -1,116 +1,197 @@
 #grep -r teams: /Users/purav.aggarwal/Documents/Purav/ResearchMe/CricketAnalytics/odis/data/* -2 | grep India | awk -F'-' '{print $1}' | awk -F'/' '{print $NF}'
 import yaml
 import os
-teamName = "Sri Lanka"
-fileN = "Sri_Lanka" #teamName
-fileName = "/Users/purav.aggarwal/Documents/Purav/ResearchMe/CricketAnalytics/odis/"+fileN+"Match"
-folderPath = "/Users/purav.aggarwal/Documents/Purav/ResearchMe/CricketAnalytics/odis/data/"
-command = "grep -r teams: %s -2 | grep \"%s\" | awk -F'-' '{print $1}' | awk -F'/' '{print $NF}' >  %s"%(folderPath,teamName,fileName)
-print command
-os.system(command)
+import subprocess
 
-matchstream = open("/Users/purav.aggarwal/Documents/Purav/ResearchMe/CricketAnalytics/odis/"+fileN+"Match",'r')
-totalWicketsTakenByIndia = 0
-totalBallingChangeWicketsByIndia = 0
-for match in matchstream:
-    stream = open("/Users/purav.aggarwal/Documents/Purav/ResearchMe/CricketAnalytics/odis/data/"+match.strip(),'r')
-    data = yaml.load(stream)
-    info = data.get('info')
-    innings = data.get('innings')
+teamNameFileName = []
+teamNameFileName.append(("India","India"))
+teamNameFileName.append(("Pakistan","Pakistan"))
+teamNameFileName.append(("South Africa","SouthAfrica"))
+teamNameFileName.append(("Australia","Australia"))
+teamNameFileName.append(("England","England"))
+teamNameFileName.append(("New Zealand","NewZealand"))
+teamNameFileName.append(("Sri Lanka","SriLanka"))
+teamNameFileName.append(("West Indies","WestIndies"))
+bowlingStats = open("/Users/purav.aggarwal/Documents/Purav/ResearchMe/CricketAnalytics/odis/BowlingStats",'w')
+stats = open("/Users/purav.aggarwal/Documents/Purav/ResearchMe/CricketAnalytics/odis/TeamStats",'w')
+stats.write("teamName,totalBallingChangeWicketsByTeam,totalWicketsTakenByTeam,first,second,third,fourth,fifth,sixth,totalOversBowledByTeam"+"\n")
+bowlingStats.write("teamName,BowlerName,first,second,third,fourth,fifth,sixth,totalBallingChangeWickets,totalWicketsTakenByBowler,totalBallingChangeWicketsByTeam,totalWicketsTakenByTeam,totalOversBowledByBowler,totalOversBowledByTeam"+"\n")
 
-    requiredInnings = innings[0].get('1st innings')
-    if(requiredInnings.get('team') == teamName):
-        if(len(innings) == 2):
-            requiredInnings = innings[1].get('2nd innings')
-            if(requiredInnings.get('team') == teamName):
-                print "ERROR:"+match
-                continue
-        else:
-            continue
 
-    deliveries = requiredInnings.get('deliveries')
-    OVER_LENGTH = 6
 
-    currentBowlerA = deliveries[0].get(0/6+0.1).get('bowler')
-    currentBowlerB = currentBowlerA
-    previousBowler = currentBowlerA
+def initBowler(bowler) :
+    bowlerOverChangeWicketsStats[bowler] = {}
+    for i in range(6):
+        bowlerOverChangeWicketsStats[bowler][i+1] = 0
 
-    total_wickets = 0
-    bowling_change_wickets = 0
-    itsABallingChangeOver = False
-    targetBowlingChangeNumberOfBalls = 6
-    overNumber = 0
-    ballKey = overNumber + 1.0/10
-    firstBall = True
-    numOfAccountableBalls = 0
-    ballIterator = 1.0/10
-    ballsThrownInCurrentOver = 1.0
-    rounder = 1
+for row in teamNameFileName:
+    teamName = row[0]
+    fileN = row[1]
+    fileName = "/Users/purav.aggarwal/Documents/Purav/ResearchMe/CricketAnalytics/odis/"+fileN+"Match"
+    folderPath = "/Users/purav.aggarwal/Documents/Purav/ResearchMe/CricketAnalytics/odis/data/"
+    #command = "grep -r teams: %s -2 | grep \"%s\" | awk -F'-' '{print $1}' | awk -F'/' '{print $NF}' >  %s"%(folderPath,teamName,fileName)
+    command = "grep -r teams: %s -2 | grep \"%s\" | awk -F'-' '{print $1}' | awk -F'/' '{print $NF}'"%(folderPath,teamName)
+    print command
+    output = subprocess.check_output(command, shell=True)
+    output = output.split("\n")
+    #os.system(command)
 
-    for i in range(0,len(deliveries)):
-        round(ballsThrownInCurrentOver,1)
-        ballsThrownInCurrentOver += 1.0
-        if(ballsThrownInCurrentOver >= 10.0):
-            rounder = 2
+    #matchstream = open("/Users/purav.aggarwal/Documents/Purav/ResearchMe/CricketAnalytics/odis/"+fileN+"Match",'r')
 
-        #print  str(match) +":::"+str(i) + ":" + str(ballKey) + ":" + ":" + str(ballsThrownInCurrentOver) + ":" + str(numOfAccountableBalls) + ":" + str(deliveries[i]) + ":" + str(deliveries[i].get(ballKey))
-        #1 Check if it's an accountable delivery
-        ballKey = round(ballKey,rounder)
-        if(not(deliveries[i].get(ballKey).get('extras')) or deliveries[i].get(ballKey).get('extras').get('legbyes') or deliveries[i].get(ballKey).get('extras').get('byes') or deliveries[i].get(ballKey).get('extras').get('penalty')):
-            numOfAccountableBalls += 1
-            if(firstBall):
-                firstBall = False
-                bowler = deliveries[i].get(ballKey).get('bowler')
-                if(currentBowlerB != bowler and currentBowlerA == currentBowlerB): #Only for the second over which we do not otherwise know where it starts.
-                    currentBowlerB = bowler
-                elif(currentBowlerA == bowler or currentBowlerB == bowler):
-                    itsABallingChangeOver = False
-                elif(currentBowlerA != bowler):
-                    previousBowler = currentBowlerA
-                    currentBowlerA = currentBowlerB
-                    currentBowlerB = bowler
-                    itsABallingChangeOver = True
-                elif(currentBowlerB != bowler):
-                    previousBowler = currentBowlerB
-                    currentBowlerB = bowler
-                    itsABallingChangeOver = True
-                else:
-                    itsABallingChangeOver = False
-    
-            #0. Check if it's a wicket ball
-            itsAWicketBall = False
-            if(deliveries[i].get(ballKey).get('wicket')):
-                total_wickets += 1
-                itsAWicketBall = True
+    teamBallNumberCount = {}
 
-            if(itsABallingChangeOver and itsAWicketBall and (numOfAccountableBalls <= targetBowlingChangeNumberOfBalls)):
-                bowling_change_wickets += 1
-                #print("Bowling Change:")
-                #print currentBowlerA
-                #print currentBowlerB
-                #print previousBowler
-                #print overNumber
-                #print ballKey
-                print numOfAccountableBalls
-    
-            if(numOfAccountableBalls == 6):
-                rounder = 1
-                numOfAccountableBalls = 0
-                ballIterator = 1.0/10
-                ballsThrownInCurrentOver = 1.0
-                overNumber += 1
-                ballKey = overNumber + ballIterator
-                firstBall = True
+    totalWicketsTakenByTeam = 0
+    totalBallingChangeWicketsByTeam = 0
+    bowlerOverChangeWicketsStats = {}
+    totalWicketsTakenByBowler = {}
+    totalOversBowledByBowler = {}
+    totalOversBowledByTeam = {}
+
+    for matchIndex in range(len(output)-1):
+        stream = open("/Users/purav.aggarwal/Documents/Purav/ResearchMe/CricketAnalytics/odis/data/"+output[matchIndex],'r')
+        data = yaml.load(stream)
+        info = data.get('info')
+        innings = data.get('innings')
+        bowlingQuota = {}
+
+        requiredInnings = innings[0].get('1st innings')
+        if(requiredInnings.get('team') == teamName):
+            if(len(innings) == 2):
+                requiredInnings = innings[1].get('2nd innings')
+                if(requiredInnings.get('team') == teamName):
+                    print "ERROR:"+output[matchIndex]
+                    continue
             else:
+                continue
+
+        deliveries = requiredInnings.get('deliveries')
+        OVER_LENGTH = 6
+
+        currentBowlerA = deliveries[0].get(0/6+0.1).get('bowler')
+        currentBowlerB = currentBowlerA
+        previousBowler = currentBowlerA
+
+        total_wickets = 0
+        bowling_change_wickets = 0
+        itsABallingChangeOver = False
+        targetBowlingChangeNumberOfBalls = 6
+        overNumber = 0
+        ballKey = overNumber + 1.0/10
+        firstBall = True
+        numOfAccountableBalls = 0
+        ballIterator = 1.0/10
+        ballsThrownInCurrentOver = 1.0
+        rounder = 1
+
+        for i in range(0,len(deliveries)):
+            round(ballsThrownInCurrentOver,1)
+            ballsThrownInCurrentOver += 1.0
+            if(ballsThrownInCurrentOver >= 10.0):
+                rounder = 2
+
+            #print  str(match) +":::"+str(i) + ":" + str(ballKey) + ":" + ":" + str(ballsThrownInCurrentOver) + ":" + str(numOfAccountableBalls) + ":" + str(deliveries[i]) + ":" + str(deliveries[i].get(ballKey))
+            #1 Check if it's an accountable delivery
+            ballKey = round(ballKey,rounder)
+            if(not(deliveries[i].get(ballKey).get('extras')) or deliveries[i].get(ballKey).get('extras').get('legbyes') or deliveries[i].get(ballKey).get('extras').get('byes') or deliveries[i].get(ballKey).get('extras').get('penalty')):
+                numOfAccountableBalls += 1
+                if(firstBall):
+                    firstBall = False
+                    bowler = deliveries[i].get(ballKey).get('bowler')
+                    if(currentBowlerB != bowler and currentBowlerA == currentBowlerB): #Only for the second over which we do not otherwise know where it starts.
+                        currentBowlerB = bowler
+                    elif(currentBowlerA == bowler or currentBowlerB == bowler):
+                        itsABallingChangeOver = False
+                    elif(currentBowlerA != bowler):
+                        previousBowler = currentBowlerA
+                        currentBowlerA = currentBowlerB
+                        currentBowlerB = bowler
+                        itsABallingChangeOver = True
+                    elif(currentBowlerB != bowler):
+                        previousBowler = currentBowlerB
+                        currentBowlerB = bowler
+                        itsABallingChangeOver = True
+                    else:
+                        itsABallingChangeOver = False
+
+                    if(bowlingQuota.has_key(previousBowler) and (bowlingQuota[previousBowler] == 10)):
+                        itsABallingChangeOver = False
+    
+                #0. Check if it's a wicket ball
+                itsAWicketBall = False
+                if(deliveries[i].get(ballKey).get('wicket')):
+                    total_wickets += 1
+                    itsAWicketBall = True
+                    if(totalWicketsTakenByBowler.has_key(bowler)):
+                        totalWicketsTakenByBowler[bowler] += 1
+                    else:
+                        totalWicketsTakenByBowler[bowler] = 1
+
+                if(itsABallingChangeOver and itsAWicketBall and (numOfAccountableBalls <= targetBowlingChangeNumberOfBalls) and (overNumber <= 45)):
+                    bowling_change_wickets += 1
+                    if(teamBallNumberCount.has_key(numOfAccountableBalls)):
+                        teamBallNumberCount[numOfAccountableBalls] += 1
+                    else:
+                        teamBallNumberCount[numOfAccountableBalls] = 1
+
+                    if(not(bowlerOverChangeWicketsStats.has_key(bowler))):
+                        initBowler(bowler)
+                    bowlerOverChangeWicketsStats[bowler][numOfAccountableBalls] += 1
+                    #print("Bowling Change:")
+                    #print currentBowlerA
+                    #print currentBowlerB
+                    #print previousBowler
+                    #print overNumber
+                    #print ballKey
+                    #print numOfAccountableBalls
+    
+                if(numOfAccountableBalls == 6):
+                    if(bowlingQuota.has_key(bowler)):
+                        if(bowlingQuota[bowler] == 10):
+                            print "ERROR: More than 10 over bowled:"+str(bowler)+":"+str(teamName)+":"
+                        else:
+                            bowlingQuota[bowler] += 1
+                    else:
+                        bowlingQuota[bowler] = 1
+                    rounder = 1
+                    numOfAccountableBalls = 0
+                    ballIterator = 1.0/10
+                    ballsThrownInCurrentOver = 1.0
+                    overNumber += 1
+                    ballKey = overNumber + ballIterator
+                    firstBall = True
+                else:
+                    ballKey = overNumber + ballsThrownInCurrentOver/pow(10,rounder)
+            else: #Extras - unaccountable ball
                 ballKey = overNumber + ballsThrownInCurrentOver/pow(10,rounder)
-        else: #Extras - unaccountable ball
-            ballKey = overNumber + ballsThrownInCurrentOver/pow(10,rounder)
-    totalBallingChangeWicketsByIndia += bowling_change_wickets
-    totalWicketsTakenByIndia += total_wickets
 
-print "bowling_change_wickets: " + str(totalBallingChangeWicketsByIndia)
-print "total_wickets: " + str(totalWicketsTakenByIndia)
+        for bowlerName in bowlingQuota.keys():
+            if(totalOversBowledByBowler.has_key(bowlerName)):
+                totalOversBowledByBowler[bowlerName] += bowlingQuota[bowlerName]
+            else:
+                totalOversBowledByBowler[bowlerName] = bowlingQuota[bowlerName]
 
+        if(totalOversBowledByTeam.has_key(teamName)):
+            totalOversBowledByTeam[teamName] += overNumber
+        else:
+            totalOversBowledByTeam[teamName] = overNumber
+
+        totalBallingChangeWicketsByTeam += bowling_change_wickets
+        totalWicketsTakenByTeam += total_wickets
+
+    stats.write(str(teamName)+","+str(totalBallingChangeWicketsByTeam)+","+str(totalWicketsTakenByTeam)+","+str(teamBallNumberCount[1])+","+str(teamBallNumberCount[2])+","+str(teamBallNumberCount[3])+","+str(teamBallNumberCount[4])+","+str(teamBallNumberCount[5])+","+str(teamBallNumberCount[6])+","+str(totalOversBowledByTeam[teamName])+str("\n"))
+    print(str(teamName)+","+str(totalBallingChangeWicketsByTeam)+","+str(totalWicketsTakenByTeam)+","+str(teamBallNumberCount[1])+","+str(teamBallNumberCount[2])+","+str(teamBallNumberCount[3])+","+str(teamBallNumberCount[4])+","+str(teamBallNumberCount[5])+","+str(teamBallNumberCount[6])+","+str(totalOversBowledByTeam[teamName])+str("\n"))
+    for key, val in bowlerOverChangeWicketsStats.items():
+        bowlingStats.write(str(teamName)+","+str(key)+","+str(val[1])+","+str(val[2])+","+str(val[3])+","+str(val[4])+","+str(val[5])+","+str(val[6])+"," + str(val[1]+val[2]+val[3]+val[4]+val[5]+val[6])+","+str(totalWicketsTakenByBowler[key])+","+str(totalBallingChangeWicketsByTeam)+","+str(totalWicketsTakenByTeam)+","+str(totalOversBowledByBowler[key])+","+str(totalOversBowledByTeam[teamName])+"\n")
+
+    #print "bowling_change_wickets: " + str(totalBallingChangeWicketsByTeam)
+    #print "total_wickets: " + str(totalWicketsTakenByTeam)
+
+#Print Bowling Stats here
+
+
+
+stats.close()
+bowlingStats.close()
 '''
 Interesting:
 
@@ -121,6 +202,7 @@ Interesting:
     5 Ball Over - 567360.yaml - - South Africa        - New Zealand 48th over SA
     7 ball over - 385749.yaml - Pak Lanka - 28th over Pak batting
     5 ball over - 518960.yaml India Lanka - lanka bowling - 29th over
+    5 ball over - 2011-10-15  531984.yaml Bangladesh WI - 14th over
 
     India Bowling : = 40
         bowling_change_wickets: 473
@@ -190,4 +272,15 @@ awk -F'.' '{print $2}' ../IndiaBowlingChangeStats | sort | uniq -c
                     63 4
                       67 5
                         70 6
+
+    WI = 32.1
+        bowling_change_wickets: 248
+        total_wickets: 772
+              49 1 = 6.3
+                36 2
+                  44 3
+                    40 4
+                      41 5
+                        38 6
+
 ''' 
