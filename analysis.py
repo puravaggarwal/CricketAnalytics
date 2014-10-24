@@ -3,6 +3,16 @@ import yaml
 import os
 import subprocess
 
+teamNames = []
+teamNames.append("India")
+teamNames.append("Pakistan")
+teamNames.append("South Africa")
+teamNames.append("Australia")
+teamNames.append("England")
+teamNames.append("New Zealand")
+teamNames.append("Sri Lanka")
+teamNames.append("West Indies")
+
 teamNameFileName = []
 teamNameFileName.append(("India","India"))
 teamNameFileName.append(("Pakistan","Pakistan"))
@@ -18,7 +28,6 @@ stats.write("teamName,totalBallingChangeWicketsByTeam,totalWicketsTakenByTeam,fi
 bowlingStats.write("teamName,BowlerName,first,second,third,fourth,fifth,sixth,totalBallingChangeWickets,totalWicketsTakenByBowler,totalBallingChangeWicketsByTeam,totalWicketsTakenByTeam,totalOversBowledByBowler,totalOversBowledByTeam"+"\n")
 
 
-
 def initBowler(bowler) :
     bowlerOverChangeWicketsStats[bowler] = {}
     for i in range(6):
@@ -29,19 +38,14 @@ for row in teamNameFileName:
     fileN = row[1]
     fileName = "/Users/purav.aggarwal/Documents/Purav/ResearchMe/CricketAnalytics/odis/"+fileN+"Match"
     folderPath = "/Users/purav.aggarwal/Documents/Purav/ResearchMe/CricketAnalytics/odis/data/"
-    #command = "grep -r teams: %s -2 | grep \"%s\" | awk -F'-' '{print $1}' | awk -F'/' '{print $NF}' >  %s"%(folderPath,teamName,fileName)
     command = "grep -r teams: %s -2 | grep \"%s\" | awk -F'-' '{print $1}' | awk -F'/' '{print $NF}'"%(folderPath,teamName)
     print command
     output = subprocess.check_output(command, shell=True)
     output = output.split("\n")
-    #os.system(command)
-
-    #matchstream = open("/Users/purav.aggarwal/Documents/Purav/ResearchMe/CricketAnalytics/odis/"+fileN+"Match",'r')
-
-    teamBallNumberCount = {}
 
     totalWicketsTakenByTeam = 0
     totalBallingChangeWicketsByTeam = 0
+    teamBallNumberCount = {}
     bowlerOverChangeWicketsStats = {}
     totalWicketsTakenByBowler = {}
     totalOversBowledByBowler = {}
@@ -52,10 +56,16 @@ for row in teamNameFileName:
         data = yaml.load(stream)
         info = data.get('info')
         innings = data.get('innings')
+        team1 = info.get('teams')[0]
+        team2 = info.get('teams')[1]
+
+        if(not(team1 in teamNames and team2 in teamNames)):
+            continue # We want to analyse matches between competetive teams only        
+  
         bowlingQuota = {}
 
         requiredInnings = innings[0].get('1st innings')
-        if(requiredInnings.get('team') == teamName):
+        if(requiredInnings.get('team') == teamName):                    #Implies the required team is batting - we want it to be balling
             if(len(innings) == 2):
                 requiredInnings = innings[1].get('2nd innings')
                 if(requiredInnings.get('team') == teamName):
@@ -121,10 +131,16 @@ for row in teamNameFileName:
                 if(deliveries[i].get(ballKey).get('wicket')):
                     total_wickets += 1
                     itsAWicketBall = True
-                    if(totalWicketsTakenByBowler.has_key(bowler)):
-                        totalWicketsTakenByBowler[bowler] += 1
-                    else:
-                        totalWicketsTakenByBowler[bowler] = 1
+                    wicketKind = deliveries[i].get(ballKey).get('wicket').get('kind')
+                    if(wicketKind != 'obstructing the field' and wicketKind != 'retired hurt' and wicketKind != 'run out'):
+                        if(totalWicketsTakenByBowler.has_key(bowler)):
+                            totalWicketsTakenByBowler[bowler] += 1
+                        else:
+                            totalWicketsTakenByBowler[bowler] = 1
+                        if(itsABallingChangeOver and (numOfAccountableBalls <= targetBowlingChangeNumberOfBalls) and (overNumber <= 45)):
+                            if(not(bowlerOverChangeWicketsStats.has_key(bowler))):
+                                initBowler(bowler)
+                            bowlerOverChangeWicketsStats[bowler][numOfAccountableBalls] += 1
 
                 if(itsABallingChangeOver and itsAWicketBall and (numOfAccountableBalls <= targetBowlingChangeNumberOfBalls) and (overNumber <= 45)):
                     bowling_change_wickets += 1
@@ -132,18 +148,8 @@ for row in teamNameFileName:
                         teamBallNumberCount[numOfAccountableBalls] += 1
                     else:
                         teamBallNumberCount[numOfAccountableBalls] = 1
-
-                    if(not(bowlerOverChangeWicketsStats.has_key(bowler))):
-                        initBowler(bowler)
-                    bowlerOverChangeWicketsStats[bowler][numOfAccountableBalls] += 1
-                    #print("Bowling Change:")
-                    #print currentBowlerA
-                    #print currentBowlerB
-                    #print previousBowler
-                    #print overNumber
-                    #print ballKey
-                    #print numOfAccountableBalls
-    
+   
+                # Over finish - Last ball just happened.
                 if(numOfAccountableBalls == 6):
                     if(bowlingQuota.has_key(bowler)):
                         if(bowlingQuota[bowler] == 10):
