@@ -1,0 +1,82 @@
+Cricket Analysis:
+
+Cricket claimed in legacy to be a sport played by the gentlemen has been unfairly supportive of the pair dresseed and draped in gears standing on either side of the 22 yards. They walk in, take positions and from there on it is majorly an event of the opposition in entirety trying to make the duet do something from the one of the 11 ways in which case one of them may be claimed as out and done for the rest of the innings.
+While this may seem a bit harsh on the batsman, it really is a sport completely dominated by him. The rules and regulations have consistenly been bended and altered to ensure it remains a paradise for the one with the teakwood in the hand.
+
+The bowlers have constantly tried to add innovation to their trade but have casually been constrained by the officials of the game in an effort to keep the glamour surging, the runs flowing. Remember the BodyLine innovated by the english bowler to restrain the excellence of Don of the game. That required no less skill and effort than the receiver trying to make contact with his stick and protecting his body from the bulleting ball. It was indeed risky but so is a pitch in a baseball or a foul in the football. Instead of adding more protection and investing in  softer crciekt balls the bowlers were asked not to do so that often.
+
+The ball being brought back from outside the leg stump was thought of as spiritless play but the bat trying to block the ball whole day in the pursuit of a draw was considered heroic. Bowler straining his arm a degree more to add variations to his craft was illegal but a batsman reversing his grip in the middle of the delivery is excellence. The powerplays and the freehits being the recent outrageousness against the fielding side. The MOMs are grossly subjective and thus distinctively in favour of the one who brings the crowd. Scoring one third of the total tally (a magical century) is considered far superior to grabbing a third of the wickets.
+
+ The historic roots of the sport support the raised concern. The kings and the lords of the English origin had fun wacking the ball being pitched to them by the slaves. Interestingly enough little has changed since. Not all batsmen may bowl but all bowlers have an obligation to get into the middle and bat, reducing a good amount of game to a mere mockery at the art of technique. Insultingly a superiorly talented sportperson is 
+
+
+One may present the fair argument that the rules are there for the army on either side. Whatsoever, fair for each side - advantageous or not. But the raised concern is from the perspective of Cricket as a sport and for an individual getting the deserved share of participation and credits.
+
+Amidst all of the restraints - there is little scope for strategy with the team.
+The feeder of the ball has a line not to cross, an arm not to bend and a limited frame where the ball needs to be delivered. The officials do give them the benefit of varying the speed. More because they do believe in the limits of human capacities.
+The retriever of the ball has clear instructions - catch it before it lands or stop it cross the rope. Retrive as fast as possible. Only a couple of options to throw at.
+The captain, supposedly the master mind of all the plays can either put up the retrievers at different positions (of course not too many here or too many there) or bring about the right feeders.
+
+As far as qunatification is concerned - the most important metric on which the bowling capability is judged is the number of wickets taken. 
+
+*****************************
+Cricket, the religion which hosts massive pilgrimages across the globe is immense in it's grandeur. It is gigantic in the extent of the duration of the contest. The mammoth number of individual points that sum up the show is unmatched to any other sport. A goal, few tries, shoots and some points - No, cricket can boost of the enormity of its runs and wickets.
+Yet from a pure statistical point of view, cricketing numbers are pretty naive. Plain totals and means have managed to satiate the requiste insight for the numerics. The context is very often dropped leading to hazy visualizations.
+
+The important question to inquire is if a run or a wicket at a stage of the game is just the same to one at a different juncture. Quite notably the question is prevelant in every other aspect of the sporting domain. The enormous dynamism and subjectivity of a sport makes quantification and measurements for the technicians a nightmare. IBM has been experimenting hard to introduce exciting new technologies to gather new data points in tennis and rugby and the results have been stagerring. Cricket has been the untouched Holy Grail so far. The latest developments with snickometers and hawk eyes and hot spots have only helped the game be relieved of the element of human error, none to add statistical depth.
+
+It's high time the sport gets itself some new measuring tapes. A very important strategical ploy in the game of cricket that has surprisingly been missed in the rich legacy of the sport is a Bowling Change. The leader on the field has only a couple of options to play along with - place the fielders at the right spots and bet on the right bowlers at the right time.
+True genius lies within the player who can pick up his game when it is of utmost importance to the team. Sachin Tendulkar, the bowler, proclaimed to be the man with the golden arm was a delight for a fielding captain. For what can be better for a captain than to have a bowler who can be his magical wand. One who could get him a wicket when brought into attack. See Sachin's % wicket if possible -->
+
+Bowling Change analytics can help measure how well a captain reads his bowlers and his ability to juggle along with them. It can also add depth to a bowler's capacity to react to the situation and perform for the team.
+
+In the quest to validate if "bowling change" can indeed be an important metric for the sport, let's dive into statistics and see if numbers support the seemingly important hypothesis.
+The data required for such an analysis is extremely detailed (at minimum granularity of an over) and beyond the present maintained sum and means of wickets and runs.
+Thankfully cricksheet does a wonderful job of tracking a good percetage of the matches ball by ball. Data for matches between the top test playing nations for both ODIs and Test (available for download at cricsheet.com) between 2008-2013 was parsed, cleaned and analysed.
+
+From a team's perspective, on an average a good quarter of the wickets were found to have fallen to a different bowler being brought into attack (defined as the one who hasn't bowled one of the previous 2 overs. The first 2 overs were by definition considered bowling change overs).In the graph below the bowling change over has also been dispensed to corresponding constituting legal deliveries.
+In the ODI plots - 
+    - The %s roughly follow the ICICI ODI rankings.
+    - There are clear clusters of top5 and bottom3
+    - The range of the results do not exceed more than 10% (31.8-India - 22.3-WI) - i.e. an advantage of a wicket in a match on average.
+    - The average is 26.8 %, thus India the leading team does no better than a wicket in 2 matches.
+    - Eng picks up the maximum of 6.9% of total wickets in 5th ball of a balling change over.
+In the Test plots - 
+    - On average 24.4% of wickets were picked up in bowling change over. Surprisingly the number is very high.
+    - The teams perform fairly consistent in the test matches. The reason could be the bowlers take more time to set up the batsman and the format is a lot slower and careful
+    - 
+
+The teams as such do not seem to be gain exceptionally well. 
+It would be interesting to see how the captains faired. IT might just be the case that different captain may have averaged out the results. Dhoni seem to have an advantage.
+
+
+From a bowler's perspective -
+The %of wickets taken in the bowling change over were plotted as the area of the bubbles placed on the coordinate axis of their contribution to the team i.e. % of wickets taken to % of overs bowled. Minimum of 100 wickets. 
+
+In the ODI plots - 
+    - Pakistan's recently banned for bowling degree lead the pack with taking a stageering one fifth of the wickets grabbed in a bowling change over. Shahid Afridi follows him next.
+    - SA leading there with Morkel next. R McLaren does a good job. Steyn 
+    - Malinga and Perera does it for Lanka
+    - World Cup champions India - leading there with their spin department around Ashwin and Jadega
+
+In the Test Plots - 
+    - Steyn and Morkel
+    - Hearth
+    - Swann and anderson and broad
+    - KAJ Roach
+    - Pakistan - Umar Gul and AJmal
+    - Australia - Siddle and Johnson
+
+India has no bowler in the top 10 of either formats.
+
+- Table Triplet
+
+- Interesting Facts: 
+
+
+
+
+
+
+
+
